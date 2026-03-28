@@ -44,8 +44,16 @@ export default function CalendarView({ articles }: Props) {
 
     // Build grid blocks
     const days = []
+    const daysInPrevMonth = new Date(year, month, 0).getDate()
     for (let i = 0; i < startingDayOfWeek; i++) {
-        days.push(<div key={`empty-${i}`} className="bg-stone-50/50 min-h-[100px]" />)
+        const prevDay = daysInPrevMonth - startingDayOfWeek + i + 1
+        days.push(
+            <div key={`empty-prev-${i}`} className="bg-stone-50/50 min-h-[100px] p-2">
+                <span className="text-xs font-semibold mb-1 w-6 h-6 flex items-center justify-center rounded-full text-stone-300">
+                    {prevDay}
+                </span>
+            </div>
+        )
     }
     for (let d = 1; d <= daysInMonth; d++) {
         const dayArticles = articlesByDate[d] || []
@@ -72,7 +80,14 @@ export default function CalendarView({ articles }: Props) {
     const totalCells = days.length
     const paddingNeeded = 42 - totalCells
     for (let i = 0; i < paddingNeeded; i++) {
-        days.push(<div key={`empty-end-${i}`} className="bg-stone-50/50 min-h-[100px]" />)
+        const nextDay = i + 1
+        days.push(
+            <div key={`empty-next-${i}`} className="bg-stone-50/50 min-h-[100px] p-2">
+                <span className="text-xs font-semibold mb-1 w-6 h-6 flex items-center justify-center rounded-full text-stone-300">
+                    {nextDay}
+                </span>
+            </div>
+        )
     }
 
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
