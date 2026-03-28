@@ -8,7 +8,7 @@ export default async function Home() {
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  // if (!user) redirect('/login')
 
   const { data: articles, error } = await supabase
     .from('articles')
@@ -33,7 +33,7 @@ export default async function Home() {
           <span className="text-stone-500 text-xs">True Platform launch</span>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-xs text-stone-400">{user.email}</span>
+          <span className="text-xs text-stone-400">{user?.email || 'Guest View'}</span>
           <form action={signOut}>
             <button
               type="submit"
@@ -47,7 +47,7 @@ export default async function Home() {
 
       {/* Board */}
       <main className="px-6 py-6 max-w-7xl mx-auto">
-        <ArticleBoard articles={articles as Article[]} currentUser={user.email ?? 'You'} />
+        <ArticleBoard articles={articles as Article[]} currentUser={user?.email || 'Guest View'} />
       </main>
     </div>
   )
