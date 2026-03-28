@@ -1,8 +1,8 @@
 'use server'
 
-import { createClient } from '../../../utils/supabase/server'
+import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
-import type { Status } from '../../../types'
+import type { Status } from '@/types'
 
 export async function updateStatus(id: string, status: Status) {
   const supabase = await createClient()
