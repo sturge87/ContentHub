@@ -68,9 +68,9 @@ export default function CalendarView({ articles }: Props) {
         )
     }
 
-    // Pad the end of the month to complete the last row
+    // Pad the end of the month to guarantee a consistent 6-week grid (42 cells)
     const totalCells = days.length
-    const paddingNeeded = (7 - (totalCells % 7)) % 7
+    const paddingNeeded = 42 - totalCells
     for (let i = 0; i < paddingNeeded; i++) {
         days.push(<div key={`empty-end-${i}`} className="bg-stone-50/50 min-h-[100px]" />)
     }
