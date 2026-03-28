@@ -9,7 +9,7 @@ import {
   STATUS_LABELS, COMPETITOR_LABELS, TRACK_LABELS, LAUNCH_WAVE_LABELS,
   ASSIGNEE_OPTIONS,
 } from '@/types'
-import { updateStatus, updateAssignee, updateReleaseDate, updatePublishedUrl } from '@/app/actions'
+import { updateStatus, updateAssignee, updatePublishBy, updatePublishedUrl } from '@/app/actions'
 
 // ─── Colour maps ─────────────────────────────────────────────
 
@@ -59,7 +59,7 @@ export default function ArticleBoard({ articles: initial, currentUser }: Props) 
   const [activePillar, setActivePillar] = useState<Pillar | 'all'>('all')
   const [activeCompetitor, setActiveCompetitor] = useState<Competitor | 'all'>('all')
   const [expandedId, setExpandedId] = useState<string | null>(null)
-  const [sortBy, setSortBy] = useState<'number' | 'release_date'>('number')
+  const [sortBy, setSortBy] = useState<'number' | 'publish_by'>('number')
   const [, startTransition] = useTransition()
 
   // Summary counts by status across all articles
@@ -73,9 +73,9 @@ export default function ArticleBoard({ articles: initial, currentUser }: Props) 
     if (activeCompetitor !== 'all' && !a.competitors.includes(activeCompetitor)) return false
     return true
   }).sort((a, b) => {
-    if (sortBy === 'release_date') {
-      const dateA = a.release_date ? new Date(a.release_date).getTime() : Infinity
-      const dateB = b.release_date ? new Date(b.release_date).getTime() : Infinity
+    if (sortBy === 'publish_by') {
+      const dateA = a.publish_by ? new Date(a.publish_by).getTime() : Infinity
+      const dateB = b.publish_by ? new Date(b.publish_by).getTime() : Infinity
       if (dateA !== dateB) return dateA - dateB
       return a.number - b.number
     }
@@ -111,13 +111,13 @@ export default function ArticleBoard({ articles: initial, currentUser }: Props) 
     })
   }
 
-  // Optimistic release date update
-  function handleReleaseDateChange(id: string, release_date: string) {
+  // Optimistic publish by date update
+  function handlePublishByChange(id: string, publish_by: string) {
     setArticles(prev =>
-      prev.map(a => a.id === id ? { ...a, release_date: release_date || null } : a)
+      prev.map(a => a.id === id ? { ...a, publish_by: publish_by || null } : a)
     )
     startTransition(async () => {
-      await updateReleaseDate(id, release_date || null)
+      await updatePublishBy(id, publish_by || null)
     })
   }
 
@@ -153,8 +153,8 @@ export default function ArticleBoard({ articles: initial, currentUser }: Props) 
         <button
           onClick={() => handleStageChange('all')}
           className={`px-4 py-2.5 text-sm border-b-2 transition-colors whitespace-nowrap -mb-px ${activeStage === 'all'
-              ? 'border-stone-900 text-stone-900 font-medium'
-              : 'border-transparent text-stone-500 hover:text-stone-700'
+            ? 'border-stone-900 text-stone-900 font-medium'
+            : 'border-transparent text-stone-500 hover:text-stone-700'
             }`}
         >
           All stages
@@ -167,8 +167,8 @@ export default function ArticleBoard({ articles: initial, currentUser }: Props) 
             key={stage}
             onClick={() => handleStageChange(stage)}
             className={`px-4 py-2.5 text-sm border-b-2 transition-colors whitespace-nowrap -mb-px ${activeStage === stage
-                ? 'border-stone-900 text-stone-900 font-medium'
-                : 'border-transparent text-stone-500 hover:text-stone-700'
+              ? 'border-stone-900 text-stone-900 font-medium'
+              : 'border-transparent text-stone-500 hover:text-stone-700'
               }`}
           >
             {STAGE_LABELS[stage]}
@@ -226,11 +226,11 @@ export default function ArticleBoard({ articles: initial, currentUser }: Props) 
       <div className="flex justify-end">
         <select
           value={sortBy}
-          onChange={(e) => setSortBy(e.target.value as 'number' | 'release_date')}
+          onChange={(e) => setSortBy(e.target.value as 'number' | 'publish_by')}
           className="text-xs text-stone-600 bg-white border border-stone-200 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-stone-300"
         >
           <option value="number">Sort by Pipeline Order</option>
-          <option value="release_date">Sort by Release Date</option>
+          <option value="publish_by">Sort by Target Release Date</option>
         </select>
       </div>
 
@@ -247,7 +247,7 @@ export default function ArticleBoard({ articles: initial, currentUser }: Props) 
             onToggle={() => setExpandedId(expandedId === article.id ? null : article.id)}
             onStatusChange={handleStatusChange}
             onAssigneeChange={handleAssigneeChange}
-            onReleaseDateChange={handleReleaseDateChange}
+            onPublishByChange={handlePublishByChange}
           />
         ))}
       </div>
@@ -281,14 +281,14 @@ function FilterPill({
 // ─── Article row ─────────────────────────────────────────────
 
 function ArticleRow({
-  article, expanded, onToggle, onStatusChange, onAssigneeChange, onReleaseDateChange,
+  article, expanded, onToggle, onStatusChange, onAssigneeChange, onPublishByChange,
 }: {
   article: Article
   expanded: boolean
   onToggle: () => void
   onStatusChange: (id: string, status: Status) => void
   onAssigneeChange: (id: string, assignee: string) => void
-  onReleaseDateChange: (id: string, release_date: string) => void
+  onPublishByChange: (id: string, publish_by: string) => void
 }) {
   return (
     <div className={`bg-white border rounded-xl transition-all ${expanded ? 'border-stone-300' : 'border-stone-200 hover:border-stone-300'
@@ -371,23 +371,13 @@ function ArticleRow({
               <p className="text-sm text-stone-700 py-1.5">{article.article_type.replace(/_/g, ' ')}</p>
             </div>
 
-            {/* Publish by */}
+            {/* Target Release */}
             <div>
-              <label className="block text-xs font-medium text-stone-500 mb-1">Target publish</label>
-              <p className="text-sm text-stone-700 py-1.5">
-                {article.publish_by
-                  ? new Date(article.publish_by).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-                  : '—'}
-              </p>
-            </div>
-
-            {/* Release Date */}
-            <div>
-              <label className="block text-xs font-medium text-stone-500 mb-1">Release date</label>
+              <label className="block text-xs font-medium text-stone-500 mb-1">Target release</label>
               <input
                 type="date"
-                value={article.release_date ?? ''}
-                onChange={e => onReleaseDateChange(article.id, e.target.value)}
+                value={article.publish_by ?? ''}
+                onChange={e => onPublishByChange(article.id, e.target.value)}
                 className="w-full text-sm px-3 py-1.5 border border-stone-200 rounded-lg bg-stone-50 focus:outline-none focus:ring-2 focus:ring-stone-300"
               />
             </div>

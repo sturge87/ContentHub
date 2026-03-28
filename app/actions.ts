@@ -24,11 +24,11 @@ export async function updateAssignee(id: string, assignee: string) {
   revalidatePath('/')
 }
 
-export async function updateReleaseDate(id: string, release_date: string | null) {
+export async function updatePublishBy(id: string, publish_by: string | null) {
   const supabase = await createClient()
   const { error } = await supabase
     .from('articles')
-    .update({ release_date })
+    .update({ publish_by })
     .eq('id', id)
   if (error) throw new Error(error.message)
   revalidatePath('/')

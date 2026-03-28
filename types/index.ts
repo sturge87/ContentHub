@@ -33,7 +33,6 @@ export interface Article {
   status: Status
   assignee: string | null
   publish_by: string | null
-  release_date: string | null
   published_url: string | null
   notes: string | null
   created_at: string
