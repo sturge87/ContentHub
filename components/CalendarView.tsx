@@ -45,20 +45,20 @@ export default function CalendarView({ articles }: Props) {
     // Build grid blocks
     const days = []
     for (let i = 0; i < startingDayOfWeek; i++) {
-        days.push(<div key={`empty-${i}`} className="bg-stone-50/50 min-h-[140px]" />)
+        days.push(<div key={`empty-${i}`} className="bg-stone-50/50 min-h-[100px]" />)
     }
     for (let d = 1; d <= daysInMonth; d++) {
         const dayArticles = articlesByDate[d] || []
         const isToday = new Date().getDate() === d && new Date().getMonth() === month && new Date().getFullYear() === year
 
         days.push(
-            <div key={d} className={`bg-white p-2 min-h-[140px] flex flex-col ${isToday ? 'bg-blue-50/20' : ''}`}>
-                <span className={`text-xs font-semibold mb-1 w-6 h-6 flex items-center justify-center rounded-full ${isToday ? 'bg-blue-600 text-white' : 'text-stone-400'}`}>
+            <div key={d} className={`bg-white p-2 min-h-[100px] flex flex-col ${isToday ? 'bg-blue-50/20' : ''}`}>
+                <span className={`text-xs font-semibold mb-1 w-6 h-6 flex items-center justify-center rounded-full shrink-0 ${isToday ? 'bg-blue-600 text-white' : 'text-stone-400'}`}>
                     {d}
                 </span>
                 <div className="flex flex-col gap-1.5 overflow-y-auto pr-1">
                     {dayArticles.map(a => (
-                        <div key={a.id} className={`text-[10px] px-1.5 py-1.5 leading-tight rounded-md border truncate ${STATUS_COLORS[a.status] || 'bg-stone-100 text-stone-600 border-stone-200'}`}>
+                        <div key={a.id} className={`text-[10px] px-1.5 py-1.5 leading-tight rounded-md border truncate shrink-0 ${STATUS_COLORS[a.status] || 'bg-stone-100 text-stone-600 border-stone-200'}`}>
                             <span className="font-semibold block opacity-80 mb-0.5">{STATUS_LABELS[a.status]}</span>
                             {a.title}
                         </div>
@@ -66,6 +66,13 @@ export default function CalendarView({ articles }: Props) {
                 </div>
             </div>
         )
+    }
+
+    // Pad the end of the month to complete the last row
+    const totalCells = days.length
+    const paddingNeeded = (7 - (totalCells % 7)) % 7
+    for (let i = 0; i < paddingNeeded; i++) {
+        days.push(<div key={`empty-end-${i}`} className="bg-stone-50/50 min-h-[100px]" />)
     }
 
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
@@ -95,7 +102,7 @@ export default function CalendarView({ articles }: Props) {
                 ))}
             </div>
 
-            <div className="flex-1 grid grid-cols-7 auto-rows-fr bg-stone-200 gap-[1px]">
+            <div className="flex-1 grid grid-cols-7 auto-rows-fr bg-stone-200 gap-[1px] overflow-y-auto">
                 {days}
             </div>
         </div>
