@@ -33,6 +33,7 @@ export interface Article {
   status: Status
   assignee: string | null
   publish_by: string | null
+  release_date: string | null
   published_url: string | null
   notes: string | null
   created_at: string
@@ -50,52 +51,52 @@ export interface ArticleComment {
 // ─── Display helpers ─────────────────────────────────────────
 
 export const PILLAR_LABELS: Record<Pillar, string> = {
-  ai_quality:    'AI quality platform',
-  unified:       'Unified platform',
-  enterprise:    'Enterprise scale',
-  competitive:   'Competitive',
-  practitioner:  'Practitioner',
+  ai_quality: 'AI quality platform',
+  unified: 'Unified platform',
+  enterprise: 'Enterprise scale',
+  competitive: 'Competitive',
+  practitioner: 'Practitioner',
 }
 
 export const STAGE_LABELS: Record<FunnelStage, string> = {
-  tofu:           'TOFU — Awareness',
-  mofu:           'MOFU — Consideration',
-  bofu:           'BOFU — Decision',
+  tofu: 'TOFU — Awareness',
+  mofu: 'MOFU — Consideration',
+  bofu: 'BOFU — Decision',
   implementation: 'Implementation',
 }
 
 export const STAGE_DESCRIPTIONS: Record<FunnelStage, string> = {
-  tofu:           'Problem-aware — capture demand, build authority, earn AI citations',
-  mofu:           'Solution-aware — own the alternatives and comparison landscape',
-  bofu:           'Product-aware — reduce friction at point of decision, support sales',
+  tofu: 'Problem-aware — capture demand, build authority, earn AI citations',
+  mofu: 'Solution-aware — own the alternatives and comparison landscape',
+  bofu: 'Product-aware — reduce friction at point of decision, support sales',
   implementation: 'Post-purchase — drive activation, reduce time-to-value, support PLG',
 }
 
 export const STATUS_LABELS: Record<Status, string> = {
-  not_started:        'Not started',
-  in_draft:           'In draft',
-  drafted:            'Drafted',
+  not_started: 'Not started',
+  in_draft: 'In draft',
+  drafted: 'Drafted',
   awaiting_proofread: 'Awaiting proofread',
-  published:          'Published',
+  published: 'Published',
 }
 
 export const COMPETITOR_LABELS: Record<Competitor, string> = {
-  tricentis:    'Tricentis',
+  tricentis: 'Tricentis',
   browserstack: 'BrowserStack',
-  smartbear:    'SmartBear',
-  testmu:       'TestMu',
+  smartbear: 'SmartBear',
+  testmu: 'TestMu',
 }
 
 export const TRACK_LABELS: Record<NonNullable<Track>, string> = {
   track_1: 'Track 1 — Demo',
   track_2: 'Track 2 — Trial',
-  both:    'Both tracks',
+  both: 'Both tracks',
 }
 
 export const LAUNCH_WAVE_LABELS: Record<NonNullable<LaunchWave>, string> = {
-  launch_day:       'By April 7',
+  launch_day: 'By April 7',
   displacement_wave: 'By April 14',
-  ongoing:          'Ongoing',
+  ongoing: 'Ongoing',
 }
 
 export const ASSIGNEE_OPTIONS = ['Unassigned', 'You', 'Huyen'] as const

@@ -24,6 +24,16 @@ export async function updateAssignee(id: string, assignee: string) {
   revalidatePath('/')
 }
 
+export async function updateReleaseDate(id: string, release_date: string | null) {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('articles')
+    .update({ release_date })
+    .eq('id', id)
+  if (error) throw new Error(error.message)
+  revalidatePath('/')
+}
+
 export async function updateNotes(id: string, notes: string) {
   const supabase = await createClient()
   const { error } = await supabase
